@@ -1,182 +1,322 @@
-Пет-проект: Delivery Service
-Идея бизнеса
+# Delivery Service
 
-Есть компания Delivery, которая занимается доставкой заказов из магазинов и ресторанов клиентам.
+A backend system for managing a delivery service.
 
-В системе есть три основных участника:
+## 📦 About the Project
 
-Клиент — оформляет заказ и хочет получить его домой.
-Курьер — получает заказ на доставку и доставляет его клиенту.
-Менеджер — следит за заказами и курьерами, решает проблемы.
-Как работает бизнес
+**Delivery Service** is a pet project that simulates the business processes of a real delivery company.
 
-Например, клиент Елдар заказывает продукты в магазине.
+The company accepts delivery orders from customers, assigns couriers to those orders, tracks the delivery process, and handles successful and failed deliveries.
 
-Клиент создаёт заказ.
-Указывает:
-что нужно доставить;
-адрес магазина;
-адрес доставки;
-контактный телефон;
-желаемое время доставки.
-Компания получает заказ.
-Менеджер назначает свободного курьера.
-Курьер забирает заказ из магазина.
-Курьер везёт заказ клиенту.
-Клиент получает заказ.
-Заказ закрывается как выполненный.
+The main goal of the project is to model the business processes of a delivery service and build a system around them.
 
-Если что-то пошло не так, заказ может быть отменён или возвращён.
+---
 
-Что должно уметь приложение
-1. Клиенты
+## 🎯 Business Goal
 
-Клиент должен иметь возможность:
+The system connects three types of users:
 
-зарегистрироваться;
-войти в систему;
-создать заказ;
-посмотреть свои заказы;
-посмотреть конкретный заказ;
-отменить заказ, если его ещё не забрал курьер;
-посмотреть статус доставки.
+* **Customer** — creates and tracks delivery orders.
+* **Courier** — receives assigned orders and delivers them.
+* **Manager** — manages orders and couriers and handles delivery issues.
 
-Например:
+A typical delivery looks like this:
 
-Заказ №152
-Статус: Курьер забрал заказ
-Магазин: Small
-Доставка: ул. Казахстан, 15
-Курьер: Алексей
+```text
+Customer
+   ↓
+Creates an order
+   ↓
+Order is confirmed
+   ↓
+Manager assigns a courier
+   ↓
+Courier picks up the order
+   ↓
+Courier delivers the order
+   ↓
+Customer receives the order
+   ↓
+Order is completed
+```
 
-2. Заказы
+---
 
-Каждый заказ проходит определённые состояния:
+## 👥 User Roles
 
-Создан → Подтверждён → Назначен курьер → Курьер забрал → В пути → Доставлен
+### Customer
 
-Также возможны:
+A customer can:
 
-Отменён
-Не доставлен
+* create a delivery order;
+* view their orders;
+* view order details;
+* track the current delivery status;
+* cancel an order before delivery has started;
+* see the delivery price;
+* choose a payment method.
 
-Важно: клиент не должен просто в любой момент менять статус заказа. Статус изменяется в зависимости от действий участников процесса.
+---
 
-3. Курьеры
+### Courier
 
-Курьер:
+A courier can:
 
-видит доступные ему заказы;
-принимает заказ;
-забирает заказ;
-начинает доставку;
-подтверждает доставку;
-может сообщить, что доставить заказ не удалось.
+* view orders assigned to them;
+* accept a delivery;
+* confirm that an order has been picked up;
+* start the delivery;
+* confirm successful delivery;
+* report a failed delivery;
+* provide a reason when a delivery cannot be completed.
 
-У курьера есть состояние:
+A courier can have one of the following states:
 
-свободен;
-занят доставкой;
-не работает.
+* **Available**
+* **Busy**
+* **Offline**
 
-Например:
+---
 
-Алексей — свободен
-Иван — доставляет заказ №153
-Сергей — не работает
+### Manager
 
-4. Менеджер
+A manager is responsible for the day-to-day operation of the delivery service.
 
-Менеджер управляет операционной частью бизнеса.
+A manager can:
 
-Он может:
+* view all orders;
+* view all couriers;
+* assign couriers to orders;
+* cancel orders;
+* monitor active deliveries;
+* handle failed deliveries;
+* reassign orders when necessary;
+* view the history of orders.
 
-видеть все заказы;
-видеть всех курьеров;
-назначать курьера на заказ;
-отменять заказ;
-менять некоторые данные заказа;
-смотреть проблемные доставки;
-видеть текущие доставки.
+---
 
-Например:
+# 📋 Orders
 
-Заказ №153
-Клиент: Анна
-Магазин: Magnum
-Адрес: Абая 25
-Статус: Ожидает курьера
+An order contains information about:
 
-Доступные курьеры:
+* customer;
+* pickup address;
+* delivery address;
+* contact information;
+* delivery time;
+* delivery price;
+* payment method;
+* payment status;
+* current order status;
+* assigned courier.
 
-Алексей
-Сергей
-Дмитрий
+### Order Lifecycle
 
-Менеджер выбирает Алексея → заказ назначается ему.
+A normal order follows this lifecycle:
 
-5. Стоимость доставки
+```text
+Created
+   ↓
+Confirmed
+   ↓
+Courier Assigned
+   ↓
+Picked Up
+   ↓
+In Transit
+   ↓
+Delivered
+```
 
-Компания зарабатывает на доставке.
+An order can also be cancelled or marked as undeliverable when something goes wrong.
 
-Стоимость рассчитывается исходя из параметров заказа.
+```text
+Created ─────────→ Cancelled
 
-Например:
+Picked Up ───────→ Delivery Failed
+```
 
-базовая стоимость — 1 000 ₸;
-срочная доставка — +500 ₸;
-большая дистанция — дополнительная плата.
+The exact rules for changing statuses are part of the business logic of the application.
 
-В итоге:
+---
 
-Доставка: 1 000 ₸
-Срочность: 500 ₸
-Итого: 1 500 ₸
+# 💰 Delivery Pricing
 
-На первом этапе можно сделать расчёт стоимости достаточно простым.
+The company charges customers for delivery.
 
-6. Оплата
+The delivery price is calculated based on the characteristics of the order.
 
-Клиент должен выбрать способ оплаты:
+For example:
 
-наличные;
-карта.
+```text
+Base delivery price     1,000 ₸
+Express delivery          500 ₸
+------------------------------
+Total                   1,500 ₸
+```
 
-Саму реальную оплату через банковский сервис делать не нужно.
+The pricing rules may be expanded as the project evolves.
 
-Для бизнес-логики достаточно, чтобы заказ имел состояние оплаты:
+---
 
-ожидает оплаты;
-оплачено;
-оплата не прошла;
-возврат.
-7. Проблемы с доставкой
+# 💳 Payments
 
-Представим, курьер приехал в магазин, но товара нет.
+The system supports different payment methods:
 
-Курьер должен иметь возможность сообщить:
+* Cash
+* Card
 
-Не удалось забрать заказ
-Причина: товар отсутствует.
+The project does not process real payments.
 
-Менеджер видит проблему и принимает решение:
+Instead, it keeps track of the payment state of an order:
 
-отменить заказ;
-назначить другой заказ;
-связаться с клиентом.
-8. История
+* **Pending**
+* **Paid**
+* **Payment Failed**
+* **Refunded**
 
-Компания должна хранить историю заказов.
+---
 
-Например:
+# ⚠️ Failed Deliveries
 
-Заказ №152
+A delivery may fail for different reasons.
 
-10:02 — заказ создан
-10:05 — заказ подтверждён
-10:12 — назначен курьер Алексей
-10:25 — Алексей забрал заказ
-10:42 — начата доставка
-10:58 — заказ доставлен
+For example:
 
-Это позволит потом анализировать работу службы доставки.
+> The courier arrives at the pickup location, but the required item is unavailable.
+
+The courier reports the problem and provides a reason.
+
+The manager can then decide what to do:
+
+* cancel the order;
+* assign another courier;
+* contact the customer;
+* take another appropriate action.
+
+---
+
+# 📝 Order History
+
+The system keeps a history of important events related to an order.
+
+For example:
+
+```text
+10:02 — Order created
+10:05 — Order confirmed
+10:12 — Courier assigned: Alex
+10:25 — Order picked up
+10:42 — Delivery started
+10:58 — Order delivered
+```
+
+This allows the company to understand what happened to an order and when.
+
+---
+
+# 🔐 Business Rules
+
+The system must enforce rules such as:
+
+* A customer can only manage their own orders.
+* A courier can only update orders assigned to them.
+* A courier cannot accept an order that is already assigned to another courier.
+* A delivered order cannot be cancelled.
+* A courier cannot start delivery before picking up the order.
+* An order cannot be assigned to an unavailable courier.
+* Payment status must be consistent with the order state.
+
+Additional business rules may be introduced during development.
+
+---
+
+# 🚀 Project Scope
+
+The project is intentionally designed to grow over time.
+
+### Initial version
+
+The first version will focus on:
+
+* customers;
+* couriers;
+* managers;
+* orders;
+* order statuses;
+* courier assignment;
+* delivery pricing;
+* payments;
+* order history.
+
+### Possible future features
+
+The system may later include:
+
+* real-time delivery tracking;
+* courier location;
+* estimated delivery time;
+* notifications;
+* customer reviews;
+* promo codes;
+* delivery zones;
+* multiple stores;
+* scheduled deliveries;
+* analytics and reports;
+* courier performance statistics.
+
+---
+
+# 🏗️ Development Approach
+
+The project is being developed as a simulation of a real-world delivery service.
+
+The business requirements are defined first, and the technical implementation is derived from those requirements.
+
+The project will evolve as new business cases and requirements are introduced.
+
+---
+
+## 📌 Example Scenario
+
+A customer orders groceries from a store.
+
+```text
+1. Customer creates an order.
+
+2. The company confirms the order.
+
+3. A manager sees that the order needs a courier.
+
+4. The manager assigns an available courier.
+
+5. The courier receives the order.
+
+6. The courier picks up the groceries.
+
+7. The courier starts the delivery.
+
+8. The courier delivers the order.
+
+9. The customer receives the order.
+
+10. The order is marked as delivered.
+```
+
+If the courier cannot pick up the order, the delivery is marked as failed and the manager handles the situation.
+
+---
+
+## 📚 Project Purpose
+
+This project is built as a **Java/Spring Boot backend pet project** to practice designing and implementing a business-oriented application.
+
+The focus is not only on creating CRUD operations, but on representing real business processes, rules, and interactions between different users of the system.
+
+---
+
+## 📈 Status
+
+**In development 🚧**
+
+The project is being developed incrementally, starting with the core delivery workflow and expanding toward a more complete delivery management system.
