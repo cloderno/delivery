@@ -4,11 +4,11 @@ A backend system for managing a delivery service.
 
 ## 📦 About the Project
 
-**Delivery Service** is a pet project that simulates the business processes of a real delivery company.
+**Delivery Service** is a pet project that simulates the business processes of a real delivery platform.
 
-The company accepts delivery orders from customers, assigns couriers to those orders, tracks the delivery process, and handles successful and failed deliveries.
+Customers create delivery orders, and available couriers can browse and choose deliveries that they want to complete.
 
-The main goal of the project is to model the business processes of a delivery service and build a system around them.
+The platform manages the entire delivery lifecycle — from creating an order to successfully delivering it to the customer.
 
 ---
 
@@ -17,8 +17,8 @@ The main goal of the project is to model the business processes of a delivery se
 The system connects three types of users:
 
 * **Customer** — creates and tracks delivery orders.
-* **Courier** — receives assigned orders and delivers them.
-* **Manager** — manages orders and couriers and handles delivery issues.
+* **Courier** — browses available deliveries and chooses which ones to complete.
+* **Manager** — monitors the delivery operation and handles problematic orders.
 
 A typical delivery looks like this:
 
@@ -27,9 +27,11 @@ Customer
    ↓
 Creates an order
    ↓
-Order is confirmed
+Order becomes available
    ↓
-Manager assigns a courier
+Courier browses available deliveries
+   ↓
+Courier accepts the delivery
    ↓
 Courier picks up the order
    ↓
@@ -62,13 +64,15 @@ A customer can:
 
 A courier can:
 
-* view orders assigned to them;
+* view available deliveries;
+* view delivery details before accepting them;
+* choose a delivery they want to complete;
 * accept a delivery;
+* view their active delivery;
 * confirm that an order has been picked up;
 * start the delivery;
 * confirm successful delivery;
-* report a failed delivery;
-* provide a reason when a delivery cannot be completed.
+* report a failed delivery.
 
 A courier can have one of the following states:
 
@@ -76,22 +80,27 @@ A courier can have one of the following states:
 * **Busy**
 * **Offline**
 
+When a courier accepts a delivery, that delivery becomes unavailable to other couriers.
+
 ---
 
 ### Manager
 
-A manager is responsible for the day-to-day operation of the delivery service.
+A manager is responsible for monitoring the delivery operation.
 
 A manager can:
 
 * view all orders;
-* view all couriers;
-* assign couriers to orders;
-* cancel orders;
-* monitor active deliveries;
+* view available deliveries;
+* view active deliveries;
+* view couriers;
+* monitor courier activity;
+* cancel orders when necessary;
 * handle failed deliveries;
-* reassign orders when necessary;
-* view the history of orders.
+* resolve problematic situations;
+* view order history.
+
+The manager does **not** normally assign couriers to deliveries. Couriers choose deliveries themselves.
 
 ---
 
@@ -119,7 +128,9 @@ Created
    ↓
 Confirmed
    ↓
-Courier Assigned
+Available
+   ↓
+Accepted by Courier
    ↓
 Picked Up
    ↓
@@ -131,12 +142,58 @@ Delivered
 An order can also be cancelled or marked as undeliverable when something goes wrong.
 
 ```text
-Created ─────────→ Cancelled
+Created ─────────────→ Cancelled
 
-Picked Up ───────→ Delivery Failed
+Available ───────────→ Cancelled
+
+Picked Up ───────────→ Delivery Failed
 ```
 
 The exact rules for changing statuses are part of the business logic of the application.
+
+---
+
+# 🚚 Choosing a Delivery
+
+When an order becomes available, nearby or available couriers can see it in the list of available deliveries.
+
+For example:
+
+```text
+Available Deliveries
+
+#152
+Pickup: Magnum, Abaya 25
+Delivery: Satpaev 10
+Distance: 4.2 km
+Price: 1,500 ₸
+
+#153
+Pickup: Small, Kazakhstan 15
+Delivery: Krylova 8
+Distance: 2.8 km
+Price: 1,200 ₸
+
+#154
+Pickup: Restaurant
+Delivery: Nezavisimosti 21
+Distance: 6.1 km
+Price: 2,000 ₸
+```
+
+The courier chooses a delivery based on the information available to them.
+
+Once the courier accepts an order:
+
+```text
+Available
+    ↓
+Accepted
+    ↓
+Courier: Alex
+```
+
+The order is no longer available to other couriers.
 
 ---
 
@@ -190,7 +247,7 @@ The courier reports the problem and provides a reason.
 The manager can then decide what to do:
 
 * cancel the order;
-* assign another courier;
+* make the delivery available again;
 * contact the customer;
 * take another appropriate action.
 
@@ -205,10 +262,11 @@ For example:
 ```text
 10:02 — Order created
 10:05 — Order confirmed
-10:12 — Courier assigned: Alex
-10:25 — Order picked up
-10:42 — Delivery started
-10:58 — Order delivered
+10:12 — Order became available
+10:18 — Courier Alex accepted the delivery
+10:31 — Order picked up
+10:45 — Delivery started
+11:02 — Order delivered
 ```
 
 This allows the company to understand what happened to an order and when.
@@ -220,64 +278,20 @@ This allows the company to understand what happened to an order and when.
 The system must enforce rules such as:
 
 * A customer can only manage their own orders.
-* A courier can only update orders assigned to them.
-* A courier cannot accept an order that is already assigned to another courier.
+* A courier can only manage deliveries they have accepted.
+* A courier cannot accept a delivery that has already been accepted by another courier.
+* A courier cannot accept a new delivery while they are busy with another one.
 * A delivered order cannot be cancelled.
 * A courier cannot start delivery before picking up the order.
-* An order cannot be assigned to an unavailable courier.
+* Only available deliveries can be accepted by couriers.
+* A courier must be available before accepting a delivery.
 * Payment status must be consistent with the order state.
 
 Additional business rules may be introduced during development.
 
 ---
 
-# 🚀 Project Scope
-
-The project is intentionally designed to grow over time.
-
-### Initial version
-
-The first version will focus on:
-
-* customers;
-* couriers;
-* managers;
-* orders;
-* order statuses;
-* courier assignment;
-* delivery pricing;
-* payments;
-* order history.
-
-### Possible future features
-
-The system may later include:
-
-* real-time delivery tracking;
-* courier location;
-* estimated delivery time;
-* notifications;
-* customer reviews;
-* promo codes;
-* delivery zones;
-* multiple stores;
-* scheduled deliveries;
-* analytics and reports;
-* courier performance statistics.
-
----
-
-# 🏗️ Development Approach
-
-The project is being developed as a simulation of a real-world delivery service.
-
-The business requirements are defined first, and the technical implementation is derived from those requirements.
-
-The project will evolve as new business cases and requirements are introduced.
-
----
-
-## 📌 Example Scenario
+# 📌 Example Scenario
 
 A customer orders groceries from a store.
 
@@ -286,37 +300,44 @@ A customer orders groceries from a store.
 
 2. The company confirms the order.
 
-3. A manager sees that the order needs a courier.
+3. The order becomes available to couriers.
 
-4. The manager assigns an available courier.
+4. Several couriers can see the delivery.
 
-5. The courier receives the order.
+5. Alex decides to accept the delivery.
 
-6. The courier picks up the groceries.
+6. The delivery is immediately assigned to Alex.
 
-7. The courier starts the delivery.
+7. Other couriers can no longer accept it.
 
-8. The courier delivers the order.
+8. Alex picks up the groceries.
 
-9. The customer receives the order.
+9. Alex starts the delivery.
 
-10. The order is marked as delivered.
+10. Alex delivers the order.
+
+11. The order is marked as delivered.
 ```
 
-If the courier cannot pick up the order, the delivery is marked as failed and the manager handles the situation.
+If Alex cannot complete the delivery, the system records the problem and the manager can decide whether the order should be cancelled or made available to another courier.
 
 ---
 
-## 📚 Project Purpose
+# 📈 Future Features
 
-This project is built as a **Java/Spring Boot backend pet project** to practice designing and implementing a business-oriented application.
+The platform may later support:
 
-The focus is not only on creating CRUD operations, but on representing real business processes, rules, and interactions between different users of the system.
-
----
-
-## 📈 Status
-
-**In development 🚧**
-
-The project is being developed incrementally, starting with the core delivery workflow and expanding toward a more complete delivery management system.
+* showing deliveries based on courier location;
+* estimated distance and travel time;
+* courier earnings;
+* delivery history;
+* customer ratings;
+* courier ratings;
+* surge pricing;
+* scheduled deliveries;
+* promo codes;
+* delivery zones;
+* multiple stores;
+* notifications;
+* real-time courier tracking;
+* analytics and reports.
