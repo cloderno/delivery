@@ -33,6 +33,7 @@ public class GlobalExceptionHandlerTest {
 
         UserNotFoundException exception = new UserNotFoundException(id);
 
+        // ожидаемое поведение
         when(messageSource.getMessage(
                 "error.user.not.found",
                 null,
@@ -41,6 +42,7 @@ public class GlobalExceptionHandlerTest {
 
         ErrorResponse result = handler.handleUserNotFoundException(exception, locale);
 
+        // проверка результата
         assertEquals(ErrorCode.USER_NOT_FOUND, result.errorCode());
         assertEquals("User not found", result.message());
         assertEquals(id, result.details().get("userId"));
