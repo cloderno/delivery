@@ -27,7 +27,7 @@ public class GlobalExceptionHandlerTest {
     private MessageSource messageSource;
 
     @Test
-    void shouldShowUserNotFound() {
+    void shouldCreateCorrectErrorResponse() {
         UUID id = UUID.randomUUID();
         Locale locale = Locale.ENGLISH;
 
