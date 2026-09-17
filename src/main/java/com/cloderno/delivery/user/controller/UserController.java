@@ -18,6 +18,11 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
 
+    @GetMapping("/get")
+    public String get() {
+        return "Привет!";
+    }
+
     @GetMapping
     public List<User> findAll() {
         return userService.findAll();
