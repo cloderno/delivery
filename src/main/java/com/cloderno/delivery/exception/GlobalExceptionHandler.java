@@ -20,6 +20,9 @@ import java.util.Objects;
 public class GlobalExceptionHandler {
     private final MessageSource messageSource;
 
+    // TODO: Add base exception
+    // TODO: make a research about exceptions
+
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(
