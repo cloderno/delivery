@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -34,4 +35,8 @@ public class UserController {
         userService.deleteById(id);
     }
 
+    @GetMapping("/{id}")
+    public Optional<User> findById(@PathVariable UUID id) {
+        return userService.findById(id);
+    }
 }
